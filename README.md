@@ -46,6 +46,9 @@ Cuando un conjunto de usuarios consulta un enésimo número (superior a 1000000)
 
 ![](images/part1/part1-vm-3000InboudRule.png)
 
+![image](https://github.com/user-attachments/assets/5c0ade05-feb4-4141-8d41-8677f8c01860)
+
+
 7. La función que calcula en enésimo número de la secuencia de Fibonacci está muy mal construido y consume bastante CPU para obtener la respuesta. Usando la consola del Browser documente los tiempos de respuesta para dicho endpoint usando los siguintes valores:
     * 1000000
     * 1010000
@@ -56,11 +59,26 @@ Cuando un conjunto de usuarios consulta un enésimo número (superior a 1000000)
     * 1060000
     * 1070000
     * 1080000
-    * 1090000    
+    * 1090000
+  
+
+![image](https://github.com/user-attachments/assets/bb217809-4f55-4c5a-9fb0-65584b74cc87)
+
+
+![image](https://github.com/user-attachments/assets/b83ca1c5-8773-44bf-8620-fa9be2ac2587)
+
+
+![image](https://github.com/user-attachments/assets/f3aaceb0-e004-4863-ade1-50346ddaf353)
+
 
 8. Dírijase ahora a Azure y verifique el consumo de CPU para la VM. (Los resultados pueden tardar 5 minutos en aparecer).
 
 ![Imágen 2](images/part1/part1-vm-cpu.png)
+
+
+
+![image](https://github.com/user-attachments/assets/4d91f747-83d8-477b-a41b-2a28b640f4d7)
+
 
 9. Ahora usaremos Postman para simular una carga concurrente a nuestro sistema. Siga estos pasos.
     * Instale newman con el comando `npm install newman -g`. Para conocer más de Newman consulte el siguiente [enlace](https://learning.getpostman.com/docs/postman/collection-runs/command-line-integration-with-newman/).
@@ -73,28 +91,148 @@ Cuando un conjunto de usuarios consulta un enésimo número (superior a 1000000)
     newman run ARSW_LOAD-BALANCING_AZURE.postman_collection.json -e [ARSW_LOAD-BALANCING_AZURE].postman_environment.json -n 10
     ```
 
+![image](https://github.com/user-attachments/assets/9cb2005b-5327-4c6f-b969-4dacd03f249a)
+
+![image](https://github.com/user-attachments/assets/777f270b-a80f-4f3e-ab13-b859df79fa89)
+
+![image](https://github.com/user-attachments/assets/56232fff-b240-49f7-9024-8d095db14af3)
+
+
+![image](https://github.com/user-attachments/assets/83f2eaa2-39ec-48e1-a2be-3755c4c75b23)
+
+
+
 10. La cantidad de CPU consumida es bastante grande y un conjunto considerable de peticiones concurrentes pueden hacer fallar nuestro servicio. Para solucionarlo usaremos una estrategia de Escalamiento Vertical. En Azure diríjase a la sección *size* y a continuación seleccione el tamaño `B2ms`.
 
 ![Imágen 3](images/part1/part1-vm-resize.png)
 
 11. Una vez el cambio se vea reflejado, repita el paso 7, 8 y 9.
-12. Evalue el escenario de calidad asociado al requerimiento no funcional de escalabilidad y concluya si usando este modelo de escalabilidad logramos cumplirlo.
-13. Vuelva a dejar la VM en el tamaño inicial para evitar cobros adicionales.
+
+![image](https://github.com/user-attachments/assets/93ce5d9f-3e92-4cf7-8645-3c6fd2ea7cbe)
+
+![image](https://github.com/user-attachments/assets/d1573a56-b15a-4f5b-bca0-812c4291a8b6)
+
+![image](https://github.com/user-attachments/assets/991e7720-f03c-4263-9867-fc6626368b83)
+
+![image](https://github.com/user-attachments/assets/8d950313-d82e-4a65-9aad-586ad0374f1c)
+
+![image](https://github.com/user-attachments/assets/87eb46f4-9ab8-473e-822a-eb1c2796ab61)
+
+![image](https://github.com/user-attachments/assets/f162f987-5df4-4f60-b798-e4fa165671da)
+
+![image](https://github.com/user-attachments/assets/5794ab0c-8e34-4039-a07b-d9d07daac8cf)
+
+
+13. Evalue el escenario de calidad asociado al requerimiento no funcional de escalabilidad y concluya si usando este modelo de escalabilidad logramos cumplirlo.
+
+Si se evidencia una reducción significativa del uso de recursos luego de realizar el escalamiento.
+   
+15. Vuelva a dejar la VM en el tamaño inicial para evitar cobros adicionales.
 
 **Preguntas**
 
 1. ¿Cuántos y cuáles recursos crea Azure junto con la VM?
+
+Virtual Machine, Resource Group, Public and Private IP address.
+
 2. ¿Brevemente describa para qué sirve cada recurso?
+
+Virtual Machine (VM)
+Una máquina virtual es un entorno de computación simulado que actúa como un ordenador físico, permitiendo ejecutar aplicaciones y sistemas operativos. En Azure, se usa para alojar aplicaciones y servicios con recursos configurables como CPU, RAM y almacenamiento.
+
+Resource Group
+Un resource group en Azure es un contenedor lógico que organiza y administra recursos relacionados, como máquinas virtuales, redes y bases de datos. Permite manejar y monitorear recursos como una unidad cohesiva.
+
+Public IP Address
+Una dirección IP pública permite que recursos en la nube sean accesibles desde Internet. Es esencial para servicios que requieren conexión externa, como APIs o aplicaciones web.
+
+Private IP Address
+Una dirección IP privada es utilizada para la comunicación interna dentro de una red virtual. Estos recursos no son accesibles desde Internet, ofreciendo mayor seguridad para sistemas internos.
+
 3. ¿Al cerrar la conexión ssh con la VM, por qué se cae la aplicación que ejecutamos con el comando `npm FibonacciApp.js`? ¿Por qué debemos crear un *Inbound port rule* antes de acceder al servicio?
+
+Cuando se ejecuta una aplicación con npm FibonacciApp.js dentro de la conexión SSH, esta queda asociada a la sesión del terminal activo. Al cerrar la conexión SSH:
+
+El proceso se termina automáticamente porque el terminal que lo inició deja de existir.
+Esto ocurre porque no se está ejecutando el proceso en segundo plano ni usando una herramienta que lo desacople de la sesión SSH. Para esto es necesario el forever
+
 4. Adjunte tabla de tiempos e interprete por qué la función tarda tando tiempo.
+
+
+La función presenta un tiempo de ejecución significativo, y este tiende a incrementarse progresivamente a medida que se realizan más iteraciones. Esto se debe a que cada iteración agrega un conjunto adicional de operaciones, lo que acumula más procesamiento en cada ciclo. Por lo tanto, el desempeño de la función está directamente influenciado por el número de iteraciones, haciendo que el tiempo total de ejecución aumente de manera proporcional o incluso exponencial dependiendo de la complejidad de las operaciones internas. Este comportamiento sugiere que el diseño y la optimización de la función son críticos, especialmente cuando se trabaja con un alto volumen de iteraciones, para garantizar un desempeño más eficiente y consistente
+
+
 5. Adjunte imágen del consumo de CPU de la VM e interprete por qué la función consume esa cantidad de CPU.
+
+![image](https://github.com/user-attachments/assets/29494bcf-9a14-4dc5-aa4a-74ce32a2ad15)
+
+Vemos una reducción entre las ejecuciones de diferentes tamaños en la parte derecha mayor el uso de la cpu.
+
 6. Adjunte la imagen del resumen de la ejecución de Postman. Interprete:
     * Tiempos de ejecución de cada petición.
     * Si hubo fallos documentelos y explique.
+
+![image](https://github.com/user-attachments/assets/eb57aaea-1ea6-44c9-9ffc-35d6e07338f3)
+
+![image](https://github.com/user-attachments/assets/cc821bca-d427-419b-b54e-f5a404c4d09a)
+
+La segunda prueba muestra un mejor desempeño, con una reducción del tiempo promedio de respuesta de aproximadamente 1.8 segundos (de 9.3s a 7.5s).
+
+Ambas pruebas muestran una desviación estándar baja (126ms en la primera y 83ms en la segunda), lo que indica que los tiempos de respuesta son consistentes en cada prueba.
+
+No se presentan fallos.
+
 7. ¿Cuál es la diferencia entre los tamaños `B2ms` y `B1ls` (no solo busque especificaciones de infraestructura)?
+
+1. Recursos Asignados:
+
+B1ls:
+
+vCPU: 1
+Memoria: 0.5 GiB
+Almacenamiento Temporal: 4 GiB
+Costo Aproximado: $3.80/mes 
+
+B2ms:
+
+vCPU: 2
+Memoria: 8 GiB
+Almacenamiento Temporal: 16 GiB
+Costo Aproximado: $58.40/mes 
+
+2. Casos de Uso:
+
+B1ls:
+
+Ideal para tareas muy ligeras, como servidores de desarrollo, pruebas básicas o aplicaciones con requerimientos mínimos de recursos.
+Adecuada para procesos que no demandan alto rendimiento y pueden tolerar latencias.
+B2ms:
+
+Apta para aplicaciones web pequeñas, servidores de bases de datos ligeros o entornos de desarrollo que requieren más memoria y capacidad de procesamiento.
+Mejor opción para cargas de trabajo que, aunque no son intensivas, necesitan más recursos que los ofrecidos por B1ls.
+3. Rendimiento y Flexibilidad:
+
+B1ls:
+
+Ofrece el costo más bajo entre las VM de Azure, pero con recursos muy limitados.
+Es adecuada para aplicaciones donde el costo es una prioridad y el rendimiento no es crítico.
+B2ms:
+
+Proporciona un equilibrio entre costo y rendimiento, ofreciendo más flexibilidad para manejar cargas de trabajo variables.
+Permite acumular y utilizar créditos de CPU de manera más eficiente, beneficiando aplicaciones con patrones de uso intermitente.
+
 8. ¿Aumentar el tamaño de la VM es una buena solución en este escenario?, ¿Qué pasa con la FibonacciApp cuando cambiamos el tamaño de la VM?
+
+Se observó que el tiempo de respuesta se redujo al incrementar la capacidad, aunque los resultados no mostraron una mejora significativa. Por esta razón, el incremento en capacidad no resulta justificado desde la perspectiva de costo-beneficio. A pesar del ajuste, la aplicación continúa demandando un alto nivel de procesamiento.
+
 9. ¿Qué pasa con la infraestructura cuando cambia el tamaño de la VM? ¿Qué efectos negativos implica?
+
+El precio aumenta en gran medida.
+
 10. ¿Hubo mejora en el consumo de CPU o en los tiempos de respuesta? Si/No ¿Por qué?
+
+Si porque los tiempos se redujeron y la cpu tuvo menos uso en el segundo intento.
+
 11. Aumente la cantidad de ejecuciones paralelas del comando de postman a `4`. ¿El comportamiento del sistema es porcentualmente mejor?
 
 ### Parte 2 - Escalabilidad horizontal
