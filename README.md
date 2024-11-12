@@ -254,17 +254,26 @@ Realizado:
 
 ![](images/part2/part2-lb-bp-create.png)
 
+Realizado:
+![image](https://github.com/user-attachments/assets/9afa7867-ba94-4ee3-9328-426d07363f98)
+
 3. A continuación cree un *Health Probe*, guiese con la siguiente imágen.
 
 ![](images/part2/part2-lb-hp-create.png)
+Realizado:
+![image](https://github.com/user-attachments/assets/88407bb4-eed7-43be-a94f-087c4d8d7f44)
 
 4. A continuación cree un *Load Balancing Rule*, guiese con la siguiente imágen.
 
 ![](images/part2/part2-lb-lbr-create.png)
+Realizado:
+![image](https://github.com/user-attachments/assets/ed89dec4-cae0-416c-a529-8a4aaae42546)
 
 5. Cree una *Virtual Network* dentro del grupo de recursos, guiese con la siguiente imágen.
 
 ![](images/part2/part2-vn-create.png)
+Realizado:
+![image](https://github.com/user-attachments/assets/cce402a3-ee1e-4ce5-a06d-684a6763c163)
 
 #### Crear las maquinas virtuales (Nodos)
 
@@ -277,6 +286,8 @@ Ahora vamos a crear 3 VMs (VM1, VM2 y VM3) con direcciones IP públicas standar 
 2. En la configuración de networking, verifique que se ha seleccionado la *Virtual Network*  y la *Subnet* creadas anteriormente. Adicionalmente asigne una IP pública y no olvide habilitar la redundancia de zona.
 
 ![](images/part2/part2-vm-create2.png)
+Realizado:
+![image](https://github.com/user-attachments/assets/6e140b8f-e1a2-4dc9-b4cf-be6c6df363bf)
 
 3. Para el Network Security Group seleccione "avanzado" y realice la siguiente configuración. No olvide crear un *Inbound Rule*, en el cual habilite el tráfico por el puerto 3000. Cuando cree la VM2 y la VM3, no necesita volver a crear el *Network Security Group*, sino que puede seleccionar el anteriormente creado.
 
@@ -285,6 +296,9 @@ Ahora vamos a crear 3 VMs (VM1, VM2 y VM3) con direcciones IP públicas standar 
 4. Ahora asignaremos esta VM a nuestro balanceador de carga, para ello siga la configuración de la siguiente imágen.
 
 ![](images/part2/part2-vm-create4.png)
+Realizado: 
+![image](https://github.com/user-attachments/assets/bf6e5cfa-22fd-440b-8169-0f57f1ea15d5)
+
 
 5. Finalmente debemos instalar la aplicación de Fibonacci en la VM. para ello puede ejecutar el conjunto de los siguientes comandos, cambiando el nombre de la VM por el correcto
 
