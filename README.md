@@ -244,6 +244,11 @@ Antes de continuar puede eliminar el grupo de recursos anterior para evitar gast
 1. El Balanceador de Carga es un recurso fundamental para habilitar la escalabilidad horizontal de nuestro sistema, por eso en este paso cree un balanceador de carga dentro de Azure tal cual como se muestra en la imágen adjunta.
 
 ![](images/part2/part2-lb-create.png)
+Realizado:
+
+![image](https://github.com/user-attachments/assets/e70ef3ac-20f7-44f8-a280-dfe5a850018e)
+![image](https://github.com/user-attachments/assets/a58433f9-2a9e-442a-9e26-60f390b5ab2b)
+
 
 2. A continuación cree un *Backend Pool*, guiese con la siguiente imágen.
 
