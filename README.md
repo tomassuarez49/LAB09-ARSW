@@ -316,6 +316,7 @@ npm install forever -g
 forever start FibonacciApp.js
 ```
 
+
 Realice este proceso para las 3 VMs, por ahora lo haremos a mano una por una, sin embargo es importante que usted sepa que existen herramientas para aumatizar este proceso, entre ellas encontramos Azure Resource Manager, OsDisk Images, Terraform con Vagrant y Paker, Puppet, Ansible entre otras.
 
 #### Probar el resultado final de nuestra infraestructura
@@ -327,7 +328,22 @@ http://52.155.223.248/
 http://52.155.223.248/fibonacci/1
 ```
 
+![Hello World](https://github.com/user-attachments/assets/a3f4b575-40af-4c0c-b000-30fabc6fdffa)
+
+![Fibonacci1](https://github.com/user-attachments/assets/26f8c823-0336-4ff1-9307-891567f11058)
+
+
 2. Realice las pruebas de carga con `newman` que se realizaron en la parte 1 y haga un informe comparativo donde contraste: tiempos de respuesta, cantidad de peticiones respondidas con éxito, costos de las 2 infraestrucruras, es decir, la que desarrollamos con balanceo de carga horizontal y la que se hizo con una maquina virtual escalada.
+
+![newman1](https://github.com/user-attachments/assets/dad3086b-7a83-44ca-a278-b61c4c125476)
+
+![vm1](https://github.com/user-attachments/assets/5effc068-14d0-41fe-8b1f-556aaa376356)
+
+
+![newman2](https://github.com/user-attachments/assets/01e3300e-824c-45be-b7b4-775d95c61447)
+
+![vm2](https://github.com/user-attachments/assets/b6d2c0c0-8848-4ca8-82eb-a23063e73b45)
+
 
 3. Agregue una 4 maquina virtual y realice las pruebas de newman, pero esta vez no lance 2 peticiones en paralelo, sino que incrementelo a 4. Haga un informe donde presente el comportamiento de la CPU de las 4 VM y explique porque la tasa de éxito de las peticiones aumento con este estilo de escalabilidad.
 
@@ -338,18 +354,82 @@ newman run ARSW_LOAD-BALANCING_AZURE.postman_collection.json -e [ARSW_LOAD-BALAN
 newman run ARSW_LOAD-BALANCING_AZURE.postman_collection.json -e [ARSW_LOAD-BALANCING_AZURE].postman_environment.json -n 10
 ```
 
+Debido a que se ha alcanzado el límite máximo de recursos asignados a esta suscripción, no es posible añadir una cuarta máquina virtual.
+Al incrementar el número de máquinas virtuales, se duplica la potencia de procesamiento (CPU) y la capacidad de almacenamiento temporal (RAM), lo que resulta en un rendimiento significativamente mayor y, en consecuencia, en una tasa de éxito más elevada al procesar las solicitudes.
+
 **Preguntas**
 
 * ¿Cuáles son los tipos de balanceadores de carga en Azure y en qué se diferencian?, ¿Qué es SKU, qué tipos hay y en qué se diferencian?, ¿Por qué el balanceador de carga necesita una IP pública?
+
+   Existen tres tipos de balanceadores de carga que se diferencian por la capa de red en la que operan:
+
+      - Balanceador de Carga de Nivel de Aplicación (Application Gateway): Funciona en la capa 7 del modelo OSI (capa de aplicación), donde dirige el tráfico en función de detalles específicos de la aplicación, como URL o encabezados HTTP. También incluye medidas de seguridad avanzadas, como cifrado SSL y protección contra ataques DDoS.
+      
+      - Balanceador de Carga de Nivel de Transporte (Load Balancer): Trabaja en la capa 4 del modelo OSI (capa de transporte) y distribuye equitativamente el tráfico entre los servidores de back-end según IP, puerto y protocolo.
+      
+      - Gateway VPN: Sirve para establecer una conexión segura a través de VPN entre una red virtual de Azure y una red local, permitiendo el flujo de tráfico seguro entre ambas redes para facilitar la integración de servicios locales y en la nube.
+
+Los SKU (Stock Keeping Units) son identificadores únicos de recursos en Azure que permiten definir sus características, capacidades y precios. Estos SKU permiten elegir la opción más adecuada según capacidad, rendimiento y disponibilidad. Algunos tipos son:
+
+      - SKU de Máquina Virtual: Define características como núcleos de CPU, RAM, almacenamiento y rendimiento de red, con opciones para uso general, optimización de cómputo, memoria y almacenamiento.
+      - SKU de Base de Datos: Determina el tamaño de almacenamiento, rendimiento y disponibilidad de bases de datos, con opciones optimizadas para uso general, memoria y alta disponibilidad.
+      - SKU de Almacenamiento: Especifica características como capacidad de almacenamiento, rendimiento y durabilidad, con categorías optimizadas para uso general, rendimiento o archivos.
+      - SKU de Servicio de Red: Define aspectos como ancho de banda, disponibilidad y seguridad, con opciones para aplicaciones web y empresariales.
+
+Para permitir que los clientes accedan a recursos de Azure detrás de un balanceador de carga, es fundamental asignarle una dirección IP pública. Esta dirección sirve como punto de entrada para dirigir el tráfico entrante a los recursos del conjunto de escalado. Sin una IP pública, no habría una ruta para el tráfico externo, impidiendo el acceso a los servicios en la nube. En resumen, la IP pública en el balanceador es esencial para habilitar la conectividad y acceso adecuado a los servicios.
+  
 * ¿Cuál es el propósito del *Backend Pool*?
+
+   El Backend Pool permite que el balanceador de carga redirija el tráfico entrante hacia los recursos correctos que están detrás de él. Dentro de este conjunto, se incluyen recursos como máquinas virtuales o instancias de contenedor configuradas en el grupo de escalado. El balanceador de carga aplica algoritmos de enrutamiento de tráfico, como Round Robin o Hash de IP, para distribuir equitativamente el tráfico hacia los recursos de destino en el Backend Pool. Este mecanismo garantiza una distribución eficiente y balanceada de la carga entre los recursos disponibles.
+  
 * ¿Cuál es el propósito del *Health Probe*?
+
+   El Health Probe es una funcionalidad esencial del balanceador de carga que permite monitorear y verificar el estado de los recursos en el Backend Pool. Su objetivo principal es asegurarse de que solo los recursos disponibles y en buen funcionamiento reciban el tráfico entrante.
+
+   Para lograr esto, el Health Probe envía periódicamente solicitudes, como pings, a los recursos del Backend Pool para comprobar su disponibilidad y respuesta adecuada. Estas solicitudes pueden ser de distintos tipos, como HTTP o TCP. Si el recurso responde correctamente, se considera saludable y sigue disponible para recibir tráfico. Si, en cambio, no responde o muestra un error, se marca como no saludable y se excluye de la lista de recursos disponibles. De esta manera, el Health Probe asegura que el balanceador de carga dirija el tráfico solo hacia los recursos que están en buen estado, garantizando la eficiencia y confiabilidad en la distribución del tráfico.
+  
 * ¿Cuál es el propósito de la *Load Balancing Rule*? ¿Qué tipos de sesión persistente existen, por qué esto es importante y cómo puede afectar la escalabilidad del sistema?.
+
+   La Load Balancing Rule (Regla de Balanceo de Carga) establece cómo el balanceador de carga debe direccionar el tráfico entrante hacia los recursos configurados en el Backend Pool. Estas reglas definen los criterios y condiciones para distribuir la carga entre los recursos disponibles, e incluyen detalles como el puerto de destino, el protocolo empleado y el algoritmo de balanceo de carga a utilizar.
+
+La persistencia de sesión es clave para mantener la coherencia en las interacciones de los usuarios, incluso cuando ocurren interrupciones o cambios en la infraestructura subyacente. Dos enfoques comunes para lograr esta persistencia son:
+   - Sesión basada en cookies:
+   La información de sesión se almacena en una cookie enviada al cliente y recuperada en solicitudes posteriores.
+   El balanceador de carga de Azure puede configurarse para distribuir el tráfico según la cookie de sesión.
+   Asegura que las solicitudes posteriores del mismo usuario se dirijan siempre al mismo servidor, manteniendo la continuidad de la sesión.
+   - Sesión basada en IP:
+   La información de sesión se almacena en un servidor de sesión dedicado y se asocia con la dirección IP del cliente.
+   El balanceador de carga de Azure puede configurarse para distribuir el tráfico según la dirección IP del cliente.
+   Garantiza que las solicitudes posteriores del mismo cliente se dirijan siempre al mismo servidor de sesión, proporcionando persistencia. La persistencia de sesión es crucial en aplicaciones web o móviles que requieren autenticación del usuario o retienen información significativa del usuario, como el carrito de compras en un sitio de comercio electrónico. Al garantizar que las interacciones del usuario se mantengan con coherencia a lo largo del tiempo, se mejora la experiencia del usuario y se evitan problemas asociados con la pérdida de datos de sesión.
+  
 * ¿Qué es una *Virtual Network*? ¿Qué es una *Subnet*? ¿Para qué sirven los *address space* y *address range*?
+
+   Una Virtual Network (VNet) es un servicio que permite crear una red virtual aislada en la nube. Al configurar una VNet, se puede asignar un rango propio de direcciones IP, establecer subredes, reglas de seguridad y puertas de enlace para conectarse con otras redes, ya sea en Internet o en redes locales.
+
+   Una Subnet es una subdivisión de una VNet que permite segmentar la red en partes más pequeñas. Cada Subnet tiene su propio rango de direcciones IP dentro del espacio de direcciones IP de la VNet y puede contar con sus propias reglas de seguridad y puertas de enlace, facilitando un mayor control y segmentación de la red.
+   
+   El Address Space es el rango de direcciones IP privadas disponibles para una VNet. Al crear una VNet, se define este espacio de direcciones, que estará disponible para la VNet y sus subredes.
+   
+   El Address Range es el rango de direcciones IP asignado a una Subnet dentro de la VNet. Al configurar una Subnet, se especifica un Address Range dentro del Address Space de la VNet, y los recursos implementados en esa Subnet recibirán direcciones IP de este rango.
+  
 * ¿Qué son las *Availability Zone* y por qué seleccionamos 3 diferentes zonas?. ¿Qué significa que una IP sea *zone-redundant*?
+
+   Una Availability Zone (Zona de Disponibilidad) en Azure es un grupo de centros de datos interconectados dentro de una misma región, donde cada zona está ubicada en un sitio físico independiente y funciona de forma autónoma, manteniéndose aislada de las fallas en otras zonas de la región. Esto ofrece mayor disponibilidad y resiliencia a las aplicaciones alojadas en Azure.
+
+   La distribución de los recursos de una aplicación en tres zonas de disponibilidad distintas permite mejorar su disponibilidad y resiliencia, ya que asegura que la aplicación pueda seguir operando incluso si una o dos zonas fallan. Además, esta estrategia optimiza el rendimiento al distribuir el tráfico entre las zonas.
+   
+   La IP zone-redundant es una dirección IP pública que se puede asignar a un recurso de Azure, como una máquina virtual o un balanceador de carga, y está disponible en todas las zonas de disponibilidad de una región. Si ocurre una falla en una zona, esta dirección IP sigue accesible desde las demás zonas, garantizando así la continuidad de la aplicación en situaciones adversas.
+  
 * ¿Cuál es el propósito del *Network Security Group*?
+
+   El Network Security Group (NSG) proporciona una capa adicional de seguridad en la red virtual, funcionando como un conjunto de reglas de filtrado de tráfico. Estas reglas definen qué tráfico puede entrar o salir de la red virtual, basándose en factores como la dirección IP de origen y destino, los puertos de origen y destino, el protocolo utilizado y otros criterios relevantes.   
+
 * Informe de newman 1 (Punto 2)
+
+   ![image](https://github.com/user-attachments/assets/bacc338a-0007-4eee-9cf9-ea1c76465b22)
+
 * Presente el Diagrama de Despliegue de la solución.
 
-
+![image](https://github.com/user-attachments/assets/13f1112f-3a58-462f-a2ef-29df4e9b1097)
 
 
