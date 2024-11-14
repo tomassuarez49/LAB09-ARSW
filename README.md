@@ -1,6 +1,8 @@
 ### Escuela Colombiana de Ingeniería
 ### Arquitecturas de Software - ARSW
 
+## Autores: Camilo Nicolas Murcia Espinosa y Tomas Suarez Piratova
+
 ## Escalamiento en Azure con Maquinas Virtuales, Sacale Sets y Service Plans
 
 ### Dependencias
